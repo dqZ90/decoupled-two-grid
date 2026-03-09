@@ -8,6 +8,7 @@
 // mr=2: H=h^1/2, h=n^2;
 // mr=3: H=m*h, h=n*G;
 // mr=4: H=h^1/2, h=2^n;
+
 int[int] mra(4);
 mra[0]=1;mra[1]=2;mra[2]=3;mra[3]=4;
 int mri=2, mrf=2; // mri and mrf are the initial and final arry mra respectively;
@@ -33,11 +34,14 @@ int[int] NOSa(3);
 NOSa[0]=1; NOSa[1]=2; NOSa[2]=3;    
 int NOSi=0, NOSf=0; //NOSi and NOSf are the initial and final arry NOSa respectively; 
 int M=5000;  //Maximum nonlinear ieteration steps
+
 //stopping criterion for nonlinear iteration on coarse mesh:
 // sign=0: max{||U^(n+1)-U^n||_0,(Omega)/||U^(n+1)||_0,(Omega)}<TOL;
 // sign=1: |logh|^{1/2}||grad(U^(n+1)-U^n)||_0,Omega||U^(n+1)-U^n||_0,Omega}<"+c+"H^2";
 // sign=2: ||U^(n+1)-U^n||_{0,Omega}<"+c+"H^2";
+
 int sign=0;
+
 // linearized methods on fine grid
 //LNOS=1: Newton-linearized method
 //LNOS=2: Ossen-linearized  method
@@ -57,17 +61,17 @@ int scheme=2;
 // for different Ra
 real[int] Raa(4);
 Raa[0]=1000;Raa[1]=10000;Raa[2]=100000;Raa[3]=1000000;
-int Rai=0, Raf=0;//Rai and Raf are the initial and final arry Raa respectively;
+int Rai=2, Raf=2;//Rai and Raf are the initial and final arry Raa respectively;
 int Rait;
-real Pr=1,  kap=1, Ra; // parameters in the equation
-real Sigma=1;  //stabilization parameter
+real Pr=0.71,  kap=1, Ra; // parameters in the equation
+real Sigma=0.1;  //stabilization parameter
 
 int NOS,NOSit,LNOS,LNOSit,mr,mrit,nuit,Ni,Nf;
 real TOL=1.0e-8;   //stopping criterion for nolinear iteration
-real epsi=1.0e-10; //parameter in the stablized term for computing 
+real epsi=1.0e-10; //parameter in the stablized term for computing
 real iterrUL2,lnorm;
-//real n1,n2;
-int k,hk,Hk,xk,yk;
+real n1,n2;
+int k,hk,Hk,xk,yk; 
 
 func mesh3 Cube(int[int] & NN,real[int,int] &BB ,int[int,int] & L){
     
@@ -100,7 +104,7 @@ for(NOSit=NOSi;NOSit<=NOSf; NOSit++){
           for(Rait=Rai;Rait<=Raf;Rait++){
              Ra=Raa[Rait];
 
-            string E ="P23d-P1-P23d",S="NC-Two-grid-decoupled-cavity";
+            string E ="P23d-P1-P23d",S="NC-Two-grid-decoupled-Cavity";
             string R,I,L;
              if(mr==1) R=",h=n^3,H^3=h^2,";
              if(mr==2) R=",h=n^2,H^2=h,";
@@ -117,7 +121,7 @@ for(NOSit=NOSi;NOSit<=NOSf; NOSit++){
 
    ffcout<<S+".edp results\n";
    ffcout<<"Global coarse grid and local fine grid linearied correection method based on two-grid mesh for NC equations\n";   
-   ffcout<<"Example: Differentially heated cubic cavity flow\n";
+   ffcout<<"Example:  Buoyancy-driven square cavity flow\n";
    ffcout<<"Omega=[0,1]*[0,1]*[0,1]"<<endl;
    if(mr==1)ffcout<<"H= "<<m<<"h"<<endl;
    if(mr==2)ffcout<<"H= "<<m<<"h "<<endl;   
@@ -149,19 +153,19 @@ for(NOSit=NOSi;NOSit<=NOSf; NOSit++){
      if(mr==3){k=n*G;Hk=k/m;} //H=m*h,h=1/n*G
      if(mr==4){k=2^n;Hk=sqrt(k);} //H=h^1/2,h=2^-n         
      
-  real h=1.0/k, H=1.0/Hk;
-  ffcout<<"\n 1/h="<<k<<",1/H="<<Hk<<endl;
+     real h=1.0/k, H=1.0/Hk;
+     ffcout<<"\n 1/h="<<k<<",1/H="<<Hk<<endl;
 	              
-  //coarse grid nolinear problem
-  real [int,int] BB=[[0,1],[0,1],[0,1]]; // bounding box of the solution domain
-  int[int] NN=[Hk,Hk,Hk]; // the Ramber of step in each direction
-  mesh3 TH=Cube(NN,BB,LL); 
-  fespace Uh(TH,P23d); Uh u1,u2,u3,v1,v2,v3,oldu1,oldu2,oldu3; // the velocity space
-  fespace Ph(TH,P13d); Ph p,q; // the pressure space
-  fespace Teh(TH,P23d);Teh T,Phi,oldT;//the temperature space
+   //coarse grid nolinear problem
+   real [int,int] BB=[[0,1],[0,1],[0,1]]; // bounding box of the solution domain
+   int[int] NN=[Hk,Hk,Hk]; // the Ramber of step in each direction
+   mesh3 TH=Cube(NN,BB,LL); 
+   fespace Uh(TH,P23d); Uh u1,u2,u3,v1,v2,v3,oldu1,oldu2,oldu3; // the velocity space
+   fespace Ph(TH,P13d); Ph p,q; // the pressure space
+   fespace Teh(TH,P23d);Teh T,Phi,oldT;//the temperature space
 
-  //Stokes problem for the initial value of nonlinear iteration of NC 
-  problem NCStokes([u1,u2,u3,p,T],[v1,v2,v3,q,Phi]) =
+   //Stokes problem for the initial value of nonlinear iteration of NC 
+   problem NCStokes([u1,u2,u3,p,T],[v1,v2,v3,q,Phi]) =
             int3d(TH)(Pr*(dx(u1)*dx(v1)+dy(u1)*dy(v1)+dz(u1)*dz(v1)
 			             +dx(u2)*dx(v2)+dy(u2)*dy(v2)+dz(u2)*dz(v2)
                          +dx(u3)*dx(v3)+dy(u3)*dy(v3)+dz(u3)*dz(v3))//a(U,V)
@@ -219,28 +223,28 @@ for(NOSit=NOSi;NOSit<=NOSf; NOSit++){
 		   +on(2,u1=0,u2=0,u3=0,T=1.0/2.0)
 		   +on(3,4,5,6,u1=0,u2=0,u3=0);   //boundary condition 
 
-  //solve the NC equations
-  int it=0;
-  real ite=1.0;
+   //solve the NC equations
+   int it=0;
+   real ite=1.0;
 
-  NCStokes; //solving Stokes problem to initiate the iteration
+   NCStokes; //solving Stokes problem to initiate the iteration
 while(ite>TOL && it<M){
         it=it+1;
         oldu1=u1;
         oldu2=u2;
 		oldu3=u3;
 		oldT=T;
-   NCNewton;	
+        NCNewton;	
         
-   //compute the successious error
-   iterrUL2 = sqrt( int3d(TH)((u1-oldu1)^2+(u2-oldu2)^2 +(u3-oldu3)^2));
-   lnorm=sqrt( int3d(TH)((u1)^2+(u2)^2+(u3)^2));
-   //avoid divided by zero
-   if(lnorm<1.0e-20) lnorm=1.0e-20;
+  //compute the successious error
+  iterrUL2 = sqrt( int3d(TH)((u1-oldu1)^2+(u2-oldu2)^2 +(u3-oldu3)^2));
+  lnorm=sqrt( int3d(TH)((u1)^2+(u2)^2+(u3)^2));
+  //avoid divided by zero
+  if(lnorm<1.0e-20) lnorm=1.0e-20;
         ite=iterrUL2/lnorm;
         }
-   if(it>=M && ite>TOL){
-       ffcout<<"  Nonlinear iterating "<<M<<" didn't satisfy the stopping condition on subdomain1 !\n";
+  if(it>=M && ite>TOL){
+    ffcout<<"  Nonlinear iterating "<<M<<" didn't satisfy the stopping condition on subdomain1 !\n";
         }
 		else{ffcout<<"\n Number of nonlinear iterations on coarse grid="<<it<<endl;}	
 
@@ -274,13 +278,12 @@ while(ite>TOL && it<M){
   oldeh12=eh12;
   oldeh13=eh13;
   problem NCOssen02([eT1],[phi1])=
-     int3d(Th01)(kap*(dx(eT1)*dx(phi1)+dy(eT1)*dy(phi1)+dz(eT1)*dz(phi1))
+    int3d(Th01)(kap*(dx(eT1)*dx(phi1)+dy(eT1)*dy(phi1)+dz(eT1)*dz(phi1))
 	           +0.5*(oldeh11*dx(eT1)*phi1+oldeh12*dy(eT1)*phi1+oldeh13*dz(eT1)*phi1) //Trilinear term b(u,T,phi)
                -0.5*(oldeh11*dx(phi1)*eT1+oldeh12*dy(phi1)*eT1+oldeh13*dz(phi1)*eT1))
     +on(1,eT1=-1.0/2.0)
 	+on(2,eT1=1.0/2.0);
   NCOssen02;
-
   real intNua=int2d(Th01,2)(dx(eT1));
   ffcout<<" Nusselt average value on x=1: "<<intNua<<endl;
   real eh11max=eh11[].max;
@@ -290,7 +293,7 @@ while(ite>TOL && it<M){
   ffcout<<" eh12 max= "<<eh12max<<endl;
   ffcout<<" eh13 max= "<<eh13max<<endl;
 
-  int gg=22;//22
+  int gg=22;
   real [int,int] B2=[[0,1],[0,1],[0,1]]; // bounding box of the solution domain
   int[int] NN2=[gg,gg,gg]; // the Ramber of step in each direction    
   mesh3 Th02=Cube(NN2,B2,LL);
@@ -313,12 +316,12 @@ while(ite>TOL && it<M){
 		 ft<<"Variables="<<"X"<<","<<"Y"<<","<<"Z"<<","<<"T"<<endl;
          ft<<"Zone"<<"   "<<"N="<<Th02.nv<<","<<"E="<<Th02.nt<<","<<"F=FEPOINT,ET=TETRAHEDRON"<<endl;
                 
-         for(i=0;i<Th02.nv;i++){
+         for(i=0;i<Th01.nv;i++){
              fu<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<eh21(Th02(i).x,Th02(i).y,Th02(i).z)<<"   "<<eh22(Th02(i).x,Th02(i).y,Th02(i).z)<<"   "<<eh23(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
              fp<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<rh2(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
              ft<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<eT2(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
          } 
-         for(i=0;i<Th02.nt;i++){
+         for(i=0;i<Th01.nt;i++){
             for(j=0;j<4;j++){
                fu<<Th02[i][j]+1<<"  ";
                fp<<Th02[i][j]+1<<"  ";
