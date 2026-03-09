@@ -168,7 +168,7 @@ for(NOSit=NOSi;NOSit<=NOSf; NOSit++){
 			   +q*(dx(u1)+dy(u2))  //d(u,q)
 			   -Pr*Ra*T*v2        //Pr*Ra*(e_jT,v)
 			   +epsi*p*q          //stabilized term for computing
-			   +Sigma1*(dx(u1)*dx(v1)+dx(u1)*dy(v2)+dy(u2)*dx(v1)+dy(u2)*dy(v2))  //grad-div stabilization term
+			   +Sigma*(dx(u1)*dx(v1)+dx(u1)*dy(v2)+dy(u2)*dx(v1)+dy(u2)*dy(v2))  //grad-div stabilization term
 	           +kap*(dx(T)*dx(Phi)+dy(T)*dy(Phi)))  //Kap*(T,Phi)
 			   +on(10,u1=0,u2=0,T=0) //boundary condition
 			   +on(1,3,u1=0,u2=0,T=0)
@@ -183,7 +183,7 @@ for(NOSit=NOSi;NOSit<=NOSf; NOSit++){
 			    +q*(dx(u1)+dy(u2))  //d(u,q)
 			    -Pr*Ra*T*v2        //Pr*Ra*(e_jT,v)
 			    +epsi*p*q          //stabilized term for computing
-				+Sigma1*(dx(u1)*dx(v1)+dx(u1)*dy(v2)+dy(u2)*dx(v1)+dy(u2)*dy(v2))  //grad-div stabilization
+				+Sigma*(dx(u1)*dx(v1)+dx(u1)*dy(v2)+dy(u2)*dx(v1)+dy(u2)*dy(v2))  //grad-div stabilization
 				+kap*(dx(T)*dx(Phi)+dy(T)*dy(Phi))  //Kap*(T,Phi)
 				+0.5*(ooldu1*dx(T)*Phi+oouldu2*dy(T)*Phi) //Trilinear term b(oldu,T,phi)
                 -0.5*(ooldu1*dx(Phi)*T+oouldu2*dy(Phi)*T)) //Trilinear term b(u,oldT,phi)		    
@@ -231,7 +231,7 @@ while(ite>TOL && it<M){
 				 -rh1*(dx(vh11)+dy(vh12))  //d(V,p)
                  +qh1*(dx(eh11)+dy(eh12))
 				 +epsi*rh1*qh1             // stabilized term for computing
-				 +Sigma1*(dx(eh11)*dx(vh11)+dx(eh11)*dy(vh12)+dy(eh12)*dx(vh11)+dy(eh12)*dy(vh12)))
+				 +Sigma*(dx(eh11)*dx(vh11)+dx(eh11)*dy(vh12)+dy(eh12)*dx(vh11)+dy(eh12)*dy(vh12)))
 	  -int2d(Th)(Pr*Ra*TT1*vh12)
 	  +on(1,2,3,4,10,eh11=0,eh12=0);
 
