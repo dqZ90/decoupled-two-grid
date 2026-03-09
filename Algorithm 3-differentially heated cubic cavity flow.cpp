@@ -301,36 +301,36 @@ while(ite>TOL && it<M){
   fespace Ph2(Th02,P13d); Ph2 rh2=rh1;  //mh1; // the pressure space 
   fespace Teh2(Th02,P23d);Teh2 eT2=eT1; //the temperature space
 
-  //for tecplot
-  int i,j;
-  ofstream fu("U-Ra="+Ra+"-"+I+"-"+E+".dat");
-  ofstream fp("P-Ra="+Ra+"-"+I+"-"+E+".dat");
-  ofstream ft("T-Ra="+Ra+"-"+I+"-"+E+".dat");
 
-         fu<<"Variables="<<"X"<<","<<"Y"<<","<<"Z"<<","<<"u"<<","<<"v"<<","<<"w"<<endl;
-         fu<<"Zone"<<"   "<<"N="<<Th02.nv<<","<<"E="<<Th02.nt<<","<<"F=FEPOINT,ET=TETRAHEDRON"<<endl;
+  int i,j;
+  ofstream fu1("U1-Ra="+Ra+"-"+I+"-"+E+".dat");
+  ofstream fp1("P1-Ra="+Ra+"-"+I+"-"+E+".dat");
+  ofstream ft1("T1-Ra="+Ra+"-"+I+"-"+E+".dat");
+
+         fu1<<"Variables="<<"X"<<","<<"Y"<<","<<"Z"<<","<<"u"<<","<<"v"<<","<<"w"<<endl;
+         fu1<<"Zone"<<"   "<<"N="<<Th02.nv<<","<<"E="<<Th02.nt<<","<<"F=FEPOINT,ET=TETRAHEDRON"<<endl;
          
-		 fp<<"Variables="<<"X"<<","<<"Y"<<","<<"Z"<<","<<"p"<<endl;
-         fp<<"Zone"<<"   "<<"N="<<Th02.nv<<","<<"E="<<Th02.nt<<","<<"F=FEPOINT,ET=TETRAHEDRON"<<endl;
+		 fp1<<"Variables="<<"X"<<","<<"Y"<<","<<"Z"<<","<<"p"<<endl;
+         fp1<<"Zone"<<"   "<<"N="<<Th02.nv<<","<<"E="<<Th02.nt<<","<<"F=FEPOINT,ET=TETRAHEDRON"<<endl;
          
-		 ft<<"Variables="<<"X"<<","<<"Y"<<","<<"Z"<<","<<"T"<<endl;
-         ft<<"Zone"<<"   "<<"N="<<Th02.nv<<","<<"E="<<Th02.nt<<","<<"F=FEPOINT,ET=TETRAHEDRON"<<endl;
+		 ft1<<"Variables="<<"X"<<","<<"Y"<<","<<"Z"<<","<<"T"<<endl;
+         ft1<<"Zone"<<"   "<<"N="<<Th02.nv<<","<<"E="<<Th02.nt<<","<<"F=FEPOINT,ET=TETRAHEDRON"<<endl;
                 
-         for(i=0;i<Th01.nv;i++){
-             fu<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<eh21(Th02(i).x,Th02(i).y,Th02(i).z)<<"   "<<eh22(Th02(i).x,Th02(i).y,Th02(i).z)<<"   "<<eh23(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
-             fp<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<rh2(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
-             ft<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<eT2(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
+         for(i=0;i<Th02.nv;i++){
+             fu1<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<eh21(Th02(i).x,Th02(i).y,Th02(i).z)<<"   "<<eh22(Th02(i).x,Th02(i).y,Th02(i).z)<<"   "<<eh23(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
+             fp1<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<rh2(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
+             ft1<<Th02(i).x<<"   "<<Th02(i).y<<"   "<<Th02(i).z<<"    "<<eT2(Th02(i).x,Th02(i).y,Th02(i).z)<<endl;
          } 
-         for(i=0;i<Th01.nt;i++){
+         for(i=0;i<Th02.nt;i++){
             for(j=0;j<4;j++){
-               fu<<Th02[i][j]+1<<"  ";
-               fp<<Th02[i][j]+1<<"  ";
-               ft<<Th02[i][j]+1<<"  ";
+               fu1<<Th02[i][j]+1<<"  ";
+               fp1<<Th02[i][j]+1<<"  ";
+               ft1<<Th02[i][j]+1<<"  ";
             }
 			if(j=4){
-				fu<<endl; 
-			    fp<<endl; 
-			    ft<<endl;
+				fu1<<endl; 
+			    fp1<<endl; 
+			    ft1<<endl;
 			}
 			} 
 	 }
